@@ -1,2 +1,2 @@
-run:
-	@sh scripts/run.sh
+run\:basics:
+	@sh scripts/run_basics.sh
