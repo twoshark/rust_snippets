@@ -73,3 +73,5 @@ Vectors compare with each other and with slices by value.
 - Under the hood, String is basically a Vec<u8> and &str is &[u8], but those bytes must represent valid UTF-8 text.
 
 
+# Matching
+

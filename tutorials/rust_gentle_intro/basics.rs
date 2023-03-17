@@ -1,5 +1,10 @@
+use std::env;
+use std::fs::File;
+use std::io::Read;
+
 // hello.rs
 fn main() {
+    cli_args();
     even_odd(true);
     even_odd(false);
     println!("{}", sum_snippets(true));
@@ -14,6 +19,8 @@ fn main() {
     vector_pop_push();
     vector_other_commands();
     string_snippets();
+    match_snippets();
+    file_reading_snippets();
 }
 
 fn even_odd(long_technique: bool) -> () {
@@ -117,23 +124,33 @@ fn slice_snippets() -> () {
     println!("first {:?}", first);
     println!("last {:?}", last);
 
-    println!("first is_some: {} is_none {}", first.is_some(), first.is_none());
+    println!(
+        "first is_some: {} is_none {}",
+        first.is_some(),
+        first.is_none()
+    );
     println!("first value unwrapped {}", first.unwrap());
-    
-    println!("last is_some: {} is_none {}", last.is_some(), last.is_none());
-    println!("last value unwrapped {}", last.unwrap());
 
+    println!(
+        "last is_some: {} is_none {}",
+        last.is_some(),
+        last.is_none()
+    );
+    println!("last value unwrapped {}", last.unwrap());
 
     println!("~~~~~~~Slice - .get() if .is_some() .unwrap() else constant value");
     let maybe_last = slice.get(5);
-    let last = if maybe_last.is_some() { *maybe_last.unwrap() } else { -1 };
+    let last = if maybe_last.is_some() {
+        *maybe_last.unwrap()
+    } else {
+        -1
+    };
 
     println!("last {}", last);
 
     println!("~~~~~~~Slice - .unwrap_or(&default)");
     let last = *slice.get(5).unwrap_or(&-1);
     println!("last {}", last);
-
 }
 
 fn vector_snippets() -> () {
@@ -147,7 +164,6 @@ fn vector_snippets() -> () {
     println!("direct accces first is {}", v[0]);
     println!("maybe_first via .get() is {:?}", v.get(0));
 
-
     println!("~~~~~~~Vector - coerce slice from `Vec`");
     let mut v = Vec::new();
     v.push(10);
@@ -158,7 +174,6 @@ fn vector_snippets() -> () {
 
     let slice = &v[1..];
     println!("slice from index 1 is {:?}", slice);
-
 }
 
 fn dump(arr: &[i32]) {
@@ -173,15 +188,13 @@ fn iterator_snippets() -> () {
     assert_eq!(iter.next(), Some(2));
     assert_eq!(iter.next(), None);
 
-
     println!("~~~~~~~Iterator - improved sum tactic");
-    let sum: i32  = (0..5).sum();
+    let sum: i32 = (0..5).sum();
     println!("sum directly using an iterator was {}", sum);
 
     let sum: i64 = [0, 1, 2, 3, 4].iter().sum();
     println!("sum indirectly using an iterator from an array was {}", sum);
 }
-
 
 fn slice_segmentation_snippets() -> () {
     println!("~~~~~~~slice.windows(n)");
@@ -197,7 +210,7 @@ fn slice_segmentation_snippets() -> () {
     }
 }
 
-fn vector_pop_push()->(){
+fn vector_pop_push() -> () {
     println!("~~~~~~Vector Pop/Push");
     let mut v1 = vec![10, 20, 30, 40];
     v1.pop();
@@ -213,10 +226,10 @@ fn vector_pop_push()->(){
     assert_eq!(v2, &[10, 20, 30, 0, 1]);
 }
 
-fn vector_other_commands()->(){
+fn vector_other_commands() -> () {
     println!("~~~~~~Vector - sort and dedup");
     let mut v1 = vec![1, 10, 5, 1, 2, 11, 2, 40];
-    
+
     v1.sort();
     v1.dedup();
     assert_eq!(v1, &[1, 2, 5, 10, 11, 40]);
@@ -226,11 +239,10 @@ fn dump_str(s: &str) {
     println!("str '{}'", s);
 }
 
-fn string_snippets()->(){
-    
+fn string_snippets() -> () {
     println!("~~~~~~`String` - from `&str`");
-    let text = "hello dolly";  // the string slice
-    let s = text.to_string();  // it's now an allocated string
+    let text = "hello dolly"; // the string slice
+    let s = text.to_string(); // it's now an allocated string
 
     dump_str(text);
     dump_str(&s);
@@ -242,11 +254,10 @@ fn string_snippets()->(){
     s.push_str("ello");
     s.push(' ');
     s += "World!"; // short for `push_str`
-    // remove the last char
+                   // remove the last char
     s.pop();
 
     assert_eq!(s, "Hello World");
-
 
     println!("~~~~~~`String` - arr to str with format!()");
     let arr = array_to_str(&[10, 20, 30]);
@@ -287,4 +298,70 @@ fn array_to_str(arr: &[i32]) -> String {
     res.pop();
     res.push(']');
     res
+}
+
+fn cli_args() -> () {
+    println!("~~~~~~CLI Arguments - iterate over ::args()");
+    for arg in std::env::args() {
+        println!("'{}'", arg);
+    }
+
+    println!("~~~~~~CLI Arguments - collect() into Vec");
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if args.len() > 0 {
+        // we have args!
+        for arg in std::env::args() {
+            println!("'{}'", arg);
+        }
+    }
+
+    println!("~~~~~~CLI Arguments - nth(index)");
+    let first = env::args().nth(1).expect("please supply an argument");
+    let _n: String = first.parse().expect("not a String!");
+}
+
+fn match_snippets() -> () {
+    println!("~~~~~~`match` - find example");
+    let multilingual = "Hi! ¡Hola! привет!";
+    match multilingual.find('п') {
+        Some(idx) => { // unwrapped result from `find` bound to idx
+            let hi = &multilingual[idx..];
+            println!("Russian hi {}", hi);
+        },
+        None => println!("couldn't find the greeting, Товарищ")
+    };
+    
+
+    let n = 8;
+    println!("~~~~~~`match` - switch statement like example");
+    let _text = match n {
+        0 => "zero",
+        1 => "one",
+        2 => "two",
+        _ => "many", // _ is the default case
+    };
+
+    println!("~~~~~~`match` - range matching with iterators");
+    let _text = match n {
+        0..=3 => "small",
+        4..=6 => "medium",
+        _ => "large",
+     };
+}
+
+
+fn file_reading_snippets()->() {
+    println!("~~~~~~File Reading - ");
+    let first = env::args().nth(1).expect("please supply a filename");
+
+    let mut file = File::open(&first).expect("can't open the file");
+    let mut file2 = File::open(&first).expect("can't open the file");
+
+    let mut text = String::new();
+    let mut bytes = Vec::<u8>::new();
+    file.read_to_string(&mut text).expect("can't read the file as string"); //fails if not utf-8
+    println!("file had {} bytes", text.len());
+    file2.read_to_end(&mut bytes).expect("can't read the file as bytes"); 
+    println!("file had {} bytes", bytes.len());
+    
 }
