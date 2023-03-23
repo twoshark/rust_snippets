@@ -30,9 +30,11 @@ fn main() {
 `&` is pronounced _borrow_ not _address of_ in rust. This just means pass by reference where ownership is maintained by the orginal owner.
 
 
-# Rust does not have exceptions
+# Rust does not have exception blocks i.e. try/catch syntax
 
-It has `panic`s. TODO: understand distinction
+- It manages `panic`s on a more line by line basis
+- Ending a call with `?` means return an error if one is returned.
+- `.expect("errMsg")` may be used to panic out a string error message when an error is return. 
 
 # Vectors
 
