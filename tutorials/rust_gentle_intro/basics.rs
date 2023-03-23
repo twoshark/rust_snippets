@@ -370,6 +370,7 @@ fn file_reading_snippets()->() {
 }
 
 fn result_type_snippet() ->() {
+    println!("~~~~~~Result<T,err> Type - ");
     println!("{:?}",good_or_bad(true));
     //Ok(42)
     println!("{:?}",good_or_bad(false));
@@ -391,10 +392,12 @@ fn good_or_bad(good: bool) -> Result<i32,String> {
 }
 
 fn read_file_with_result()-> (){
+    println!("~~~~~~File Reading - Using Result<>");
     let file = env::args().nth(1).expect("please supply a filename");
     let text = read_to_string(&file).expect("bad file man!");
     println!("file had {} bytes", text.len());
 
+    println!("~~~~~~File Reading - Using io::Result<T>");
     let file2 = env::args().nth(1).expect("please supply a filename");
     let text2 = read_to_string_with_io_result(&file).expect("bad file man!");
     println!("file had {} bytes", text.len());
