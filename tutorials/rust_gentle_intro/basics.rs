@@ -1,6 +1,7 @@
 use std::env;
 use std::fs::File;
 use std::io::Read;
+use std::io;
 
 // hello.rs
 fn main() {
@@ -21,6 +22,8 @@ fn main() {
     string_snippets();
     match_snippets();
     file_reading_snippets();
+    result_type_snippet();
+    read_file_with_result();
 }
 
 fn even_odd(long_technique: bool) -> () {
@@ -364,4 +367,54 @@ fn file_reading_snippets()->() {
     file2.read_to_end(&mut bytes).expect("can't read the file as bytes"); 
     println!("file had {} bytes", bytes.len());
     
+}
+
+fn result_type_snippet() ->() {
+    println!("{:?}",good_or_bad(true));
+    //Ok(42)
+    println!("{:?}",good_or_bad(false));
+    //Err("bad")
+
+    match good_or_bad(true) {
+        Ok(n) => println!("Cool, I got {}",n),
+        Err(e) => println!("Huh, I just got {}",e)
+    }
+    // Cool, I got 42
+}
+
+fn good_or_bad(good: bool) -> Result<i32,String> {
+    if good {
+        Ok(42)
+    } else {
+        Err("bad".to_string())
+    }
+}
+
+fn read_file_with_result()-> (){
+    let file = env::args().nth(1).expect("please supply a filename");
+    let text = read_to_string(&file).expect("bad file man!");
+    println!("file had {} bytes", text.len());
+
+    let file2 = env::args().nth(1).expect("please supply a filename");
+    let text2 = read_to_string_with_io_result(&file).expect("bad file man!");
+    println!("file had {} bytes", text.len());
+}
+
+fn read_to_string(filename: &str) -> Result<String,io::Error> {
+    let mut file = match File::open(&filename) {
+        Ok(f) => f,
+        Err(e) => return Err(e),
+    };
+    let mut text = String::new();
+    match file.read_to_string(&mut text) {
+        Ok(_) => Ok(text),
+        Err(e) => Err(e),
+    }
+}
+
+fn read_to_string_with_io_result(filename: &str) -> io::Result<String> {
+    let mut file = File::open(&filename)?;
+    let mut text = String::new();
+    file.read_to_string(&mut text)?; //returns the error here if there is one
+    Ok(text) // otherwise Ok()
 }
